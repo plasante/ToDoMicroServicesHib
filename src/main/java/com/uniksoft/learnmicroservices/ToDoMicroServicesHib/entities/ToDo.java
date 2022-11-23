@@ -32,6 +32,12 @@ public class ToDo {
     @NotNull @NotEmpty @NotBlank
     private String priority;
 
-    @Column(name = "FKUSER")
+    @Column(name = "FK_USER")
+    @NotNull @NotEmpty @NotBlank
     private String fkUser;
+
+    @PrePersist
+    void getTimeOperation() {
+        this.date = date;
+    }
 }
