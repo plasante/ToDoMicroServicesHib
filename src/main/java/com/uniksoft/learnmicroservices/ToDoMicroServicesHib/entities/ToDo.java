@@ -1,6 +1,7 @@
 package com.uniksoft.learnmicroservices.ToDoMicroServicesHib.entities;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Generated;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
+@Data
 @Table(name = "todos")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -40,4 +42,5 @@ public class ToDo {
     void getTimeOperation() {
         this.date = date;
     }
+
 }

@@ -21,6 +21,8 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class User {
 
+    // VALIDATION JSR-303 Hibernate validator
+
     @Id
     @Column(name = "EMAIL", nullable = false)
     @NotNull @NotBlank @NotEmpty
