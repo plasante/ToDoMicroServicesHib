@@ -8,13 +8,12 @@ import com.uniksoft.learnmicroservices.ToDoMicroServicesHib.utilities.JsonRespon
 import com.uniksoft.learnmicroservices.ToDoMicroServicesHib.utilities.ToDoValidator;
 import com.uniksoft.learnmicroservices.ToDoMicroServicesHib.utilities.UserNotInDatabaseException;
 import com.uniksoft.learnmicroservices.ToDoMicroServicesHib.utilities.UserNotLoggedException;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -121,12 +120,61 @@ public class RestController {
     public ResponseEntity<JsonResponseBody> showToDow(HttpServletRequest request) {
         try {
             Map<String, Object> userData = loginService.verifyJwtAndGetData(request);
-            return ResponseEntity.status(HttpStatus.OK).body(new JsonResponseBody(HttpStatus.OK.value(), toDoService.getToDos((String) userData.get("email"))));
+            return ResponseEntity.status(HttpStatus.OK)
+                                 .body(new JsonResponseBody(HttpStatus.OK.value(), toDoService.getToDos((String) userData.get("email"))));
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body(new JsonResponseBody(HttpStatus.BAD_REQUEST.value(), "Bad Request: " + e.toString()));
         } catch (UserNotLoggedException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                 .body(new JsonResponseBody(HttpStatus.FORBIDDEN.value(), "Forbidden: " + e.toString()));
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT)
+                                 .body(new JsonResponseBody(HttpStatus.GATEWAY_TIMEOUT.value(), "Session Expired: " + e.toString()));
         }
 
+    }
+
+    @PostMapping("/newToDo")
+    public ResponseEntity<JsonResponseBody> newToDo(HttpServletRequest request, @Valid ToDo toDo, BindingResult result) {
+
+        ToDoValidator validator = new ToDoValidator();
+        validator.validate(toDo, result);
+
+        if (result.hasErrors()) {
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                  .body(new JsonResponseBody(HttpStatus.BAD_REQUEST.value(), "Data not valid: " + result.toString()));
+        } else {
+
+            try {
+                loginService.verifyJwtAndGetData(request);
+                return ResponseEntity.status(HttpStatus.OK).body(new JsonResponseBody(HttpStatus.OK.value(), toDoService.addToDo(toDo)));
+            } catch (UnsupportedEncodingException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseBody(HttpStatus.BAD_REQUEST.value(), "Bad Request: " + e.toString()));
+            } catch (UserNotLoggedException e) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new JsonResponseBody(HttpStatus.FORBIDDEN.value(), "Forbidden: " + e.toString()));
+            } catch (ExpiredJwtException e) {
+                return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(new JsonResponseBody(HttpStatus.GATEWAY_TIMEOUT.value(), "Session Expired: " + e.toString()));
+            }
+        }
+    }
+
+    // {id} is a PathVariable
+    @DeleteMapping("/deleteTodo/{id}")
+    public ResponseEntity<JsonResponseBody> deleteToDo(HttpServletRequest request, @PathVariable(name = "id") Integer toDoId) {
+        // Success -> message of success
+        // Fail -> error message
+
+        try {
+            loginService.verifyJwtAndGetData(request);
+            toDoService.deleteToDo(toDoId);
+            return ResponseEntity.status(HttpStatus.OK).body(new JsonResponseBody(HttpStatus.OK.value(), "ToDo correctly deleted"));
+        } catch (UnsupportedEncodingException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseBody(HttpStatus.BAD_REQUEST.value(), "Bad Request: " + e.toString()));
+        } catch (UserNotLoggedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new JsonResponseBody(HttpStatus.FORBIDDEN.value(), "Forbidden: " + e.toString()));
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(new JsonResponseBody(HttpStatus.GATEWAY_TIMEOUT.value(), "Session Expired: " + e.toString()));
+        }
     }
 }

@@ -7,13 +7,14 @@ import com.uniksoft.learnmicroservices.ToDoMicroServicesHib.utilities.JwtUtils;
 import com.uniksoft.learnmicroservices.ToDoMicroServicesHib.utilities.UserNotInDatabaseException;
 import com.uniksoft.learnmicroservices.ToDoMicroServicesHib.utilities.UserNotLoggedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
-
+@Service
 public class LoginServiceImpl implements LoginService {
 
     @Autowired
