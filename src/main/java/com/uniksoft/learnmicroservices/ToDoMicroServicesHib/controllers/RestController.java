@@ -160,7 +160,7 @@ public class RestController {
     }
 
     // {id} is a PathVariable
-    @DeleteMapping("/deleteTodo/{id}")
+    @DeleteMapping("/deleteToDo/{id}")
     public ResponseEntity<JsonResponseBody> deleteToDo(HttpServletRequest request, @PathVariable(name = "id") Integer toDoId) {
         // Success -> message of success
         // Fail -> error message

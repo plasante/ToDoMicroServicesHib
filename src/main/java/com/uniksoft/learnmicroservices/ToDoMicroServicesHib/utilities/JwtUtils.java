@@ -33,6 +33,7 @@ public class JwtUtils {
 
         Jws<Claims> claim = Jwts.parser()
                 .setSigningKey("myPersonalSecretKey12345".getBytes("UTF-8"))
+                .setAllowedClockSkewSeconds(3000L)
                 .parseClaimsJws(jwt);
 
         String name = claim.getBody().get("name", String.class);
@@ -47,7 +48,7 @@ public class JwtUtils {
 
         Date now = new Date();
         if (now.after(expDate)) {
-            throw new ExpiredJwtException(null, null, "Session expired!");
+            //throw new ExpiredJwtException(null, null, "Session expired!");
         }
 
         return userData;

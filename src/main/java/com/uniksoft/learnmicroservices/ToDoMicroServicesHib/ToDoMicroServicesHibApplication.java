@@ -37,22 +37,22 @@ public class ToDoMicroServicesHibApplication implements CommandLineRunner {
 
 		String encryptedPwd;
 		encryptedPwd = encryptionUtils.encrypt("321eRRe!p");
-		userDao.save(new User("pierre.lasante@videotron.ca","Pierre Lasante1",encryptedPwd));
+		userDao.save(new User("pierre.lasante@videotron.ca","Pierre Lasante",encryptedPwd));
 
 		encryptedPwd = encryptionUtils.encrypt("321eRRe!p");
-		userDao.save(new User("pierre.lasante@gmail.com","Pierre Lasante2",encryptedPwd));
+		userDao.save(new User("judith.spenard@gmail.com","Judith Spenard",encryptedPwd));
 
 		encryptedPwd = encryptionUtils.encrypt("321eRRe!p");
 		userDao.save(new User("carole.spenard@gmail.com","Carole Spenard",encryptedPwd));
 
 		toDoDao.save(new ToDo(1, "Learn Microservices", new Date(), "high", "pierre.lasante@videotron.ca"));
-		toDoDao.save(new ToDo(2, "Learn Spring boot", null, "low", "pierre.lasante@videotron.ca"));
+		toDoDao.save(new ToDo(2, "Learn Spring boot", new Date(), "low", "pierre.lasante@videotron.ca"));
 
-		toDoDao.save(new ToDo(3, "Feed Animals", new Date(), "high", "pierre.lasante@gmail.com"));
-		toDoDao.save(new ToDo(4, "Go to take Jim", null, "low", "pierre.lasante@gmail.com"));
+		toDoDao.save(new ToDo(3, "Feed Animals", new Date(), "high", "judith.spenard@gmail.com"));
+		toDoDao.save(new ToDo(4, "Go to take Jim", new Date(), "low", "judith.spenard@gmail.com"));
 
 		toDoDao.save(new ToDo(5, "Bue a new car", new Date(), "high", "carole.spenard@gmail.com"));
-		toDoDao.save(new ToDo(6, "Go to Gym", null, "low", "carole.spenard@gmail.com"));
+		toDoDao.save(new ToDo(6, "Go to Gym", new Date(), "low", "carole.spenard@gmail.com"));
 
 		log.info("Finished filling the H2 db");
 	}
